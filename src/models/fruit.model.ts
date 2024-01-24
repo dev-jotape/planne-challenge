@@ -9,12 +9,13 @@ const fruitSchema = new Schema({
         type: Number,
         required: true
     },
-    expiration: {
-        type: String,
+    expireAt: {
+        type: Date,
         required: true
-    },
+    }
 });
 
-const Fruit = model('Fruit', fruitSchema);
+fruitSchema.index({expireAt: 1}, { expireAfterSeconds: 0 });
+const Fruit = model('Fruits', fruitSchema);
 
 export { Fruit }
