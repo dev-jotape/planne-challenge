@@ -1,13 +1,13 @@
 import express from 'express';
 import config from './config';
 import mongoose from 'mongoose';
+import routes from './routes';
 
 const PORT = config.port || 3000;
 const app = express();
 
 app.use(express.json());
-
-console.log(config.dbUrl);
+app.use(routes());
 
 mongoose.connect(config.dbUrl!).then(() => {
     console.info('Connected to MongoDB');
