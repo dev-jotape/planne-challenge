@@ -16,6 +16,6 @@ const fruitSchema = new Schema({
 });
 
 fruitSchema.index({expireAt: 1}, { expireAfterSeconds: 0 });
-const Fruit = model('Fruits', fruitSchema);
+const Fruit = model('Fruit', fruitSchema);
 
 export { Fruit }

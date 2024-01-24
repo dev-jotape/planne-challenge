@@ -8,4 +8,6 @@ export default (app: Router) => {
     app.use('/buckets', route);
 
     route.post('/', controller.create);
+    route.get('/', controller.list);
+    route.post('/:id/fruits', controller.depositFruits);
 }
