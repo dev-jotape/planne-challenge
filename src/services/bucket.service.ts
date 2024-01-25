@@ -9,75 +9,34 @@ class BucketService {
 
             return bucket;
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }
 
     list = async () => {
         try {
-            const bucket = await Bucket.aggregate([
-                // include fruits
-                {
-                    $lookup: {
-                      from: 'fruits',
-                      localField: 'fruits',
-                      foreignField: '_id',
-                      as: 'fruits',
-                    },
-                },
-                // deconstructs fruits array
-                {
-                  $unwind: {
-                    path: '$allFruits',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-                // filter by valid fruits
-                {
-                  $match: {
-                    $or: [
-                      { "fruits": [] },
-                      { "fruits.expireAt": { $gt: new Date() } },
-                    ],
-                  },
-                },
-                // format response (calculating the occupancy percentage)
-                {
-                  $project: {
-                    _id: 1,
-                    capacity: 1,
-                    totalFruits: {$size: "$fruits"},
-                    fruits: {
-                        $map: {
-                          input: '$fruits',
-                          as: 'fruits',
-                          in: {
-                            _id: '$$fruits._id',
-                            name: '$$fruits.name',
-                            price: '$$fruits.price',
-                            expireAt: '$$fruits.expireAt',
-                          },
-                        },
-                    },
-                    occupation: {
-                      $multiply: [
-                        { $divide: [ { $size: "$fruits" }, "$capacity" ] },
-                        100
-                      ]
-                    },
-                    totalPrice: { $sum: '$fruits.price' }, 
-                  },
-                },
-                // sort by occupation (descending)
-                {
-                  $sort: { occupation: -1 },
-                },
-              ]);
+          const buckets = await Bucket.find().populate({
+            path: "fruits",
+            select: "_id name price expireAt",
+            match: { expireAt: {$gt: new Date()}}
+          });
 
-            return bucket;
+          const formatedBucket = buckets.map(bucket => {
+            const occupation = bucket.fruits.length
+                                ? (bucket.fruits.length / bucket.capacity) * 100
+                                : 0;
+            const totalPrice = bucket.fruits.length
+                                ? bucket.fruits.reduce((accumulator, currentValue) => accumulator + currentValue['price'], 0)
+                                : 0;
+            return {
+              ...bucket.toJSON(),
+              occupation,
+              totalPrice: parseFloat(totalPrice.toFixed(2))
+            }
+          });
+
+          return formatedBucket.sort((a, b) => b.occupation - a.occupation);
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }
@@ -99,8 +58,8 @@ class BucketService {
         }
 
         await Bucket.deleteOne({ _id });
+        return _id;
       } catch (error) {
-        console.error(error);
         throw error;
       }
     }
@@ -148,7 +107,6 @@ class BucketService {
 
             return result;
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }
@@ -169,7 +127,6 @@ class BucketService {
 
         return result;
       } catch (error) {
-        console.error(error);
         throw error;
       }
     }

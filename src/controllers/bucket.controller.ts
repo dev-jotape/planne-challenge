@@ -30,8 +30,8 @@ class BucketController {
 
     delete = async (req: Request, res: Response) => {
         try {
-            await this.bucketService.delete(req.params.id);
-            return res.status(200).send({ success: true });
+            const result = await this.bucketService.delete(req.params.id);
+            return res.status(200).send({ success: true, deleted: result });
         } catch (error: any) {
             return res.status(400).send({ success: false, error: error.message });
         }

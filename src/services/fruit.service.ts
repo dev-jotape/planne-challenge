@@ -9,6 +9,9 @@ class FruitService {
         try {
             const numericValue = parseInt(data.expiration);
             const unit = data.expiration.slice(-1);
+            if (!numericValue) {
+                throw new Error('Invalid expiration value');
+            }
 
             let expirationDate = new Date();
 
@@ -25,15 +28,16 @@ class FruitService {
                 default:
                   throw new Error('Invalid unit. Use "s" for seconds, "m" for minutes, or "h" for hours.');
             }
+            // console.log('aqui5 => ', expirationDate)
 
             const fruit = await Fruit.create({
                 ...data,
                 expireAt: expirationDate
             });
+            // console.log('finish')
 
             return fruit;
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }
@@ -43,7 +47,6 @@ class FruitService {
             const result = await Fruit.find({ expireAt: { $gt: new Date() } });
             return result; 
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }
@@ -60,7 +63,6 @@ class FruitService {
 
             return true; 
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }

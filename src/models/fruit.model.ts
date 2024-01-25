@@ -13,7 +13,7 @@ const fruitSchema = new Schema({
         type: Date,
         required: true
     }
-});
+}, { versionKey: false });
 
 fruitSchema.index({expireAt: 1}, { expireAfterSeconds: 0 });
 const Fruit = model('Fruit', fruitSchema);
