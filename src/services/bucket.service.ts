@@ -47,7 +47,7 @@ class BucketService {
                   $project: {
                     _id: 1,
                     capacity: 1,
-                    total_items: {$size: "$fruits"},
+                    totalFruits: {$size: "$fruits"},
                     fruits: {
                         $map: {
                           input: '$fruits',
@@ -99,8 +99,6 @@ class BucketService {
         }
 
         await Bucket.deleteOne({ _id });
-
-        return true;
       } catch (error) {
         console.error(error);
         throw error;
@@ -144,7 +142,11 @@ class BucketService {
                 throw new Error('Fruit not found');
             }
 
-            const result = await Bucket.updateOne({ _id }, { $push: { fruits: fruit._id } });
+            const result = await Bucket.findByIdAndUpdate({ _id }, { $push: { fruits: fruit._id } }, { new: true }).populate({
+              path: "fruits",
+              select: "_id name price expireAt",
+              match: { expireAt: {$gt: new Date()}}
+            });
 
             return result;
         } catch (error) {
@@ -155,7 +157,17 @@ class BucketService {
 
     removeFruits = async (bucketId: string, fruitId: string) => {
       try {
-        const result = await Bucket.updateOne({ _id: bucketId }, { $pull: { fruits: fruitId } });
+        const bucket = await Bucket.findById(bucketId);
+
+        if (!bucket) {
+          throw new Error('Bucket not found');
+        }
+
+        const result = await Bucket.findByIdAndUpdate({ _id: bucketId }, { $pull: { fruits: fruitId } }, { new: true }).populate({
+          path: "fruits",
+          select: "_id name price expireAt",
+          match: { expireAt: {$gt: new Date()}}
+        });;
 
         return result;
       } catch (error) {
