@@ -8,7 +8,7 @@ Nela é possivel:
 - Obter uma listagem de Frutas
 - Obter uma listagem de Baldes, com o valor total da soma dos preços das Frutas, porcentagem de ocupação do Balde e ordenado de modo decrescente pela sua ocupação.
 
-Obs: Todas as Frutas possuem um período de expiração e são removidas dos Baldes e tem o registro apagado de forma automática (utilizando TTL do MongoDB).
+Obs: Todas as Frutas possuem um período de expiração, sendo removidas dos Baldes e tendo o registro apagado de forma automática (utilizando TTL do MongoDB).
 
 ## Principais tecnologias
 

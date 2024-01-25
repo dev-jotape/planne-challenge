@@ -29,13 +29,11 @@ class FruitService {
                 default:
                   throw new Error('Invalid unit. Use "s" for seconds, "m" for minutes, or "h" for hours.');
             }
-            // console.log('aqui5 => ', expirationDate)
 
             const fruit = await Fruit.create({
                 ...data,
                 expireAt: expirationDate
             });
-            // console.log('finish')
 
             return fruit;
         } catch (error) {
