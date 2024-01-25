@@ -7,7 +7,7 @@
     "start": "node ./dist/app.js",
     "dev": "nodemon --config nodemon.json src/app.ts",
     "build": "tsc -p .",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "dependencies": {
     "celebrate": "^15.0.3",
