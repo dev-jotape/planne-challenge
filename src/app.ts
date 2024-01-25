@@ -73,7 +73,6 @@ app.use((error, req, res, next) => {
 
 mongoose.connect(config.dbUrl!).then(() => {
     console.info('Connected to MongoDB');
-    mongoose.set('debug', true);
     app.listen(PORT, () => {
         console.log('Server is running on port ', PORT)
     });

@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  node:
+    build:
+      context: ./
+      target: dev
+    volumes:
+      - ./:/app
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: mongodb://root:root@mongo
+    links:
+      - mongo
+
   mongo:
     container_name: mongo
     image: mongo
