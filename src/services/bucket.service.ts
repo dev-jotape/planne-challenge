@@ -1,7 +1,8 @@
 import { Bucket, Fruit } from '../models';
+import { ICreatedBucket, IBucket, IReducedBucket } from '../interfaces/bucket.interface';
 
 class BucketService {
-    create = async (capacity: number) => {
+    create = async (capacity: number): Promise<ICreatedBucket> => {
         try {
             const bucket = await Bucket.create({
                 capacity
@@ -13,9 +14,9 @@ class BucketService {
         }
     }
 
-    list = async () => {
+    list = async (): Promise<IBucket[]> => {
         try {
-          const buckets = await Bucket.find().populate({
+          const buckets: IReducedBucket[] = await Bucket.find().populate({
             path: "fruits",
             select: "_id name price expireAt",
             match: { expireAt: {$gt: new Date()}}
@@ -29,8 +30,10 @@ class BucketService {
                                 ? bucket.fruits.reduce((accumulator, currentValue) => accumulator + currentValue['price'], 0)
                                 : 0;
             return {
-              ...bucket.toJSON(),
+              _id: bucket._id,
+              capacity: bucket.capacity,
               occupation,
+              fruits: bucket.fruits,
               totalPrice: parseFloat(totalPrice.toFixed(2))
             }
           });
@@ -41,7 +44,7 @@ class BucketService {
         }
     }
 
-    delete = async (_id: string) => {
+    delete = async (_id: string): Promise<string> => {
       try {
         const bucket = await Bucket.findById(_id).populate({
           path: "fruits",
@@ -67,7 +70,7 @@ class BucketService {
     depositFruits = async (
         _id: string,
         fruitId: string
-    ) => {
+    ): Promise<IReducedBucket> => {
         try {
             const bucket = await Bucket.findById(_id).populate({
                 path: "fruits",
@@ -99,19 +102,19 @@ class BucketService {
                 throw new Error('Fruit not found');
             }
 
-            const result = await Bucket.findByIdAndUpdate({ _id }, { $push: { fruits: fruitId } }, { new: true }).populate({
+            const result: IReducedBucket | null = await Bucket.findByIdAndUpdate({ _id }, { $push: { fruits: fruitId } }, { new: true }).populate({
               path: "fruits",
               select: "_id name price expireAt",
               match: { expireAt: {$gt: new Date()}}
             });
 
-            return result;
+            return result!;
         } catch (error) {
             throw error;
         }
     }
 
-    removeFruits = async (bucketId: string, fruitId: string) => {
+    removeFruits = async (bucketId: string, fruitId: string): Promise<IReducedBucket> => {
       try {
         const bucket = await Bucket.findById(bucketId);
 
@@ -119,13 +122,13 @@ class BucketService {
           throw new Error('Bucket not found');
         }
 
-        const result = await Bucket.findByIdAndUpdate({ _id: bucketId }, { $pull: { fruits: fruitId } }, { new: true }).populate({
+        const result: IReducedBucket | null = await Bucket.findByIdAndUpdate({ _id: bucketId }, { $pull: { fruits: fruitId } }, { new: true }).populate({
           path: "fruits",
           select: "_id name price expireAt",
           match: { expireAt: {$gt: new Date()}}
-        });;
+        });
 
-        return result;
+        return result!;
       } catch (error) {
         throw error;
       }

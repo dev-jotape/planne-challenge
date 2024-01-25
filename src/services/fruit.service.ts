@@ -1,11 +1,12 @@
 import { Fruit, Bucket } from '../models';
+import { IFruit } from '../interfaces/fruit.interface';
 
 class FruitService {      
     create = async (data: {
         name: string,
         price: number,
         expiration: string
-    }) => {
+    }): Promise<IFruit> => {
         try {
             const numericValue = parseInt(data.expiration);
             const unit = data.expiration.slice(-1);
@@ -42,7 +43,7 @@ class FruitService {
         }
     }
 
-    list = async () => {
+    list = async (): Promise<IFruit[]> => {
         try {
             const result = await Fruit.find({ expireAt: { $gt: new Date() } });
             return result; 
@@ -51,7 +52,7 @@ class FruitService {
         }
     }
 
-    delete = async (_id: string) => {
+    delete = async (_id: string): Promise<string> => {
         try {
             await Fruit.deleteOne({ _id });
 
@@ -61,7 +62,7 @@ class FruitService {
                 { $pull: { fruits: _id } }
             );
 
-            return true; 
+            return _id; 
         } catch (error) {
             throw error;
         }
