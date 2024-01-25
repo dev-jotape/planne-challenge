@@ -3,16 +3,19 @@ FROM node:18.12.1 as base
 RUN mkdir /app
 WORKDIR /app
 
-EXPOSE 4000
+FROM base as build
 
-FROM base as production
-ENV NODE_ENV=production
-RUN npm ci
-COPY . /
-CMD ["npm", "start"]
+COPY package*.json ./
+RUN npm install
 
-FROM base as dev
+FROM node:18.12.1 as dev
+
 ENV NODE_ENV=development
+
+COPY --from=build /app/node_modules ./node_modules
+
+WORKDIR /app
+
 COPY . .
-RUN npm install -g nodemon && npm install
+
 CMD ["npm", "dev"]
