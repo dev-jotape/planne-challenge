@@ -9,4 +9,5 @@ export default (app: Router) => {
 
     route.post('/', controller.create);
     route.get('/', controller.list);
+    route.delete('/:id', controller.delete);
 }

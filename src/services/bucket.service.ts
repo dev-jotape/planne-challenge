@@ -26,11 +26,21 @@ class BucketService {
                       as: 'fruits',
                     },
                 },
+                // deconstructs fruits array
+                {
+                  $unwind: {
+                    path: '$allFruits',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
                 // filter by valid fruits
                 {
-                    $match: {
-                      "fruits.expireAt": { $gt: new Date() },
-                    },
+                  $match: {
+                    $or: [
+                      { "fruits": [] },
+                      { "fruits.expireAt": { $gt: new Date() } },
+                    ],
+                  },
                 },
                 // format response (calculating the occupancy percentage)
                 {
@@ -49,18 +59,19 @@ class BucketService {
                             expireAt: '$$fruits.expireAt',
                           },
                         },
-                      },
+                    },
                     occupation: {
                       $multiply: [
                         { $divide: [ { $size: "$fruits" }, "$capacity" ] },
                         100
                       ]
                     },
+                    totalPrice: { $sum: '$fruits.price' }, 
                   },
                 },
-                // sort by occupation
+                // sort by occupation (descending)
                 {
-                  $sort: { occupation: 1 },
+                  $sort: { occupation: -1 },
                 },
               ]);
 
@@ -69,6 +80,31 @@ class BucketService {
             console.error(error);
             throw error;
         }
+    }
+
+    delete = async (_id: string) => {
+      try {
+        const bucket = await Bucket.findById(_id).populate({
+          path: "fruits",
+          select: "_id",
+          match: { expireAt: {$gt: new Date()}}
+        });
+
+        if (!bucket) {
+          throw new Error('Bucket not found');
+        }
+
+        if (bucket.fruits.length > 0) {
+          throw new Error('Bucket not empty');
+        }
+
+        await Bucket.deleteOne({ _id });
+
+        return true;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
     }
 
     depositFruits = async (
@@ -115,6 +151,17 @@ class BucketService {
             console.error(error);
             throw error;
         }
+    }
+
+    removeFruits = async (bucketId: string, fruitId: string) => {
+      try {
+        const result = await Bucket.updateOne({ _id: bucketId }, { $pull: { fruits: fruitId } });
+
+        return result;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
     }
 }
 

@@ -14,14 +14,27 @@ class FruitController {
         try {
             const result = await this.fruitService.create(data);
             return res.status(200).send(result);
-        } catch (error) {
-            return res.status(400).send(error);
+        } catch (error: any) {
+            return res.status(400).send(error.message);
         }
     }
 
     list = async (req: Request, res: Response) => {
-        const result = await this.fruitService.list();
-        return res.status(200).send(result);
+        try {
+            const result = await this.fruitService.list();
+            return res.status(200).send(result);
+        } catch (error: any) {
+            return res.status(400).send(error.message);
+        }
+    }
+
+    delete = async (req: Request, res: Response) => {
+        try {
+            const result = await this.fruitService.delete(req.params.id);
+            return res.status(200).send(result);
+        } catch (error: any) {
+            return res.status(400).send(error.message);
+        }
     }
 }
 

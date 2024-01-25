@@ -1,4 +1,4 @@
-import { Fruit } from '../models';
+import { Fruit, Bucket } from '../models';
 
 class FruitService {      
     create = async (data: {
@@ -42,6 +42,23 @@ class FruitService {
         try {
             const result = await Fruit.find({ expireAt: { $gt: new Date() } });
             return result; 
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    delete = async (_id: string) => {
+        try {
+            await Fruit.deleteOne({ _id });
+
+            // remove from all buckets
+            await Bucket.updateMany(
+                { fruits: _id },
+                { $pull: { fruits: _id } }
+            );
+
+            return true; 
         } catch (error) {
             console.error(error);
             throw error;
