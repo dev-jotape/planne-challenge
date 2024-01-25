@@ -38,10 +38,10 @@ class BucketController {
     }
 
     depositFruits = async (req: Request, res: Response) => {
-        const data = req.body;
+        const { fruitId } = req.body;
 
         try {
-            const result = await this.bucketService.depositFruits(req.params.id, data);
+            const result = await this.bucketService.depositFruits(req.params.id, fruitId);
             return res.status(200).send({ success: true, bucket: result });
         } catch (error: any) {
             return res.status(400).send({ success: false, error: error.message });

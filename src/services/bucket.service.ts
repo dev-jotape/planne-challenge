@@ -107,9 +107,7 @@ class BucketService {
 
     depositFruits = async (
         _id: string,
-        fruit: {
-            _id: string
-        }
+        fruitId: string
     ) => {
         try {
             const bucket = await Bucket.findById(_id).populate({
@@ -127,14 +125,14 @@ class BucketService {
             }
 
             // check if the fruit is already in the bucket
-            const containFruit = bucket.fruits.find(el => el._id.toString() === fruit._id);
+            const containFruit = bucket.fruits.find(el => el._id.toString() === fruitId);
             if (containFruit) {
                 throw new Error('Fruit is already in the bucket');
             }
 
             // check if is a valid fruit
             const isValid = await Fruit.findOne({
-                _id: fruit._id,
+                _id: fruitId,
                 expireAt: { $gt: new Date() }
             });
 
@@ -142,7 +140,7 @@ class BucketService {
                 throw new Error('Fruit not found');
             }
 
-            const result = await Bucket.findByIdAndUpdate({ _id }, { $push: { fruits: fruit._id } }, { new: true }).populate({
+            const result = await Bucket.findByIdAndUpdate({ _id }, { $push: { fruits: fruitId } }, { new: true }).populate({
               path: "fruits",
               select: "_id name price expireAt",
               match: { expireAt: {$gt: new Date()}}

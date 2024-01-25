@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { BucketController } from '../controllers/bucket.controller';
+import * as BucketValidator from '../validators/bucket.validator';
 
 export default (app: Router) => {
     const route = Router();
@@ -7,9 +8,9 @@ export default (app: Router) => {
 
     app.use('/buckets', route);
 
-    route.post('/', controller.create);
+    route.post('/', BucketValidator.create, controller.create);
     route.get('/', controller.list);
     route.delete('/:id', controller.delete);
-    route.post('/:id/fruits', controller.depositFruits);
+    route.post('/:id/fruits', BucketValidator.depositFruits, controller.depositFruits);
     route.delete('/:bucketId/fruits/:fruitId', controller.removeFruits);
 }
