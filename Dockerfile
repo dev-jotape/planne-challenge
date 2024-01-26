@@ -1,9 +1,11 @@
 FROM node:18.12.1
 
-WORKDIR /api
-
-COPY . /api
-
+COPY package.json ./
+COPY yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-ENTRYPOINT ["yarn", "run", "dev"]
+WORKDIR /app
+
+COPY . .
+
+CMD ["yarn", "dev"]
