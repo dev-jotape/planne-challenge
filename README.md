@@ -34,7 +34,7 @@ Assim, 2 containers serão criados, sendo o primeiro do MongoDB e o segundo da A
 
 A API ficará disponível em http://localhost:3000.
 
-A documentação da API é fornecida utilizando o *Swagger*, que simplifica a exploração e compreensão dos endpoints disponíveis na aplicação. A documentação pode ser acessada em http://localhost:3000/api-docs.
+A documentação da API é fornecida utilizando o *Swagger*, que simplifica a exploração e compreensão dos endpoints disponíveis na aplicação. A documentação pode ser acessada em http://localhost:3000/api-docs ou até mesmo através do Postman Collection (`postman_collection/Planne.postman_collection.json`).
 
 > A lib `nodemon` é utilizada para realizar o auto-reload, o que significa que qualquer alteração no código será refletida automaticamente, sem a necessidade de reiniciar manualmente a aplicação.
 
