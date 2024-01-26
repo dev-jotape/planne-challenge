@@ -1,21 +1,9 @@
-FROM node:18.12.1 as base
+FROM node:18.12.1
 
-RUN mkdir /app
-WORKDIR /app
+WORKDIR /api
 
-FROM base as build
+COPY . /api
 
-COPY package*.json ./
-RUN npm install
+RUN yarn install --frozen-lockfile
 
-FROM node:18.12.1 as dev
-
-ENV NODE_ENV=development
-
-COPY --from=build /app/node_modules ./node_modules
-
-WORKDIR /app
-
-COPY . .
-
-CMD ["npm", "dev"]
+ENTRYPOINT ["yarn", "run", "dev"]
