@@ -49,7 +49,7 @@ Primeiro, crie um arquivo `.env` na raiz do projeto e adicione a URL do banco de
 DATABASE_URL=mongodb://root:root@127.0.0.1:27017
 ```
 
-### 2. Instalar dependencias
+### 2. Instalar dependências
 
 Basta executar `yarn` ou `npm install`
 
@@ -80,7 +80,7 @@ Testes unitários foram criados para validar os mais variados cenários, oferece
 
 ![alt text](jest-coverage.png)
 
-Para rodar os testes, basta executar o comando:
-```
-yarn test
-```
+Para rodar os testes:
+
+1. Instale as dependências (se ainda não o fez): `yarn`
+2. Rode os testes: `yarn test`
